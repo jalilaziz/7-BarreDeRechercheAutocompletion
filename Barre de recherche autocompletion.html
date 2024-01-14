@@ -58,12 +58,11 @@
         city: [],
       };
       let isFind = {};
+
       inp.addEventListener("input", (e) => {
         ul.innerHTML = title;
         cities = [];
-        console.log(e.target.value);
         isFind = {};
-
         allData[category].filter((item) => {
           const city = item[category].toLowerCase();
           if (city.includes(inp.value)) {
@@ -95,13 +94,12 @@
               //to change input value
               ul.appendChild(
                 createLi(
-                  `<b>City</b> :${item.city}, <b>State</b>:  ${item.state}`,
+                  `<b>City</b>: ${item.city}, <b>State</b>: ${item.state}`,
                   "city",
                   JSON.stringify(item)
                 )
               );
             });
-            console.log(allData[category]);
           } else {
             // to show info of city
             category = "State";
@@ -110,13 +108,13 @@
             title=`<b>Search about ${category}</b>`
             ul.innerHTML = `
             <li><b>Info About City</b></li>
-            <li><b>City</b> : ${item.city} </li>
-            <li><b>State</b>:  ${item.state}</li>
-            <li><b>Rank</b>:  ${item.rank}</li>
-            <li><b>Population</b>:  ${item.population}</li>
-            <li><b>Growth from 2000 to 2013</b>:  ${item.growth_from_2000_to_2013}</li>
-            <li><b>Latitude</b>:  ${item.latitude}</li>
-            `;
+            <li><b>City</b>: ${item.city} </li>
+            <li><b>State</b>: ${item.state}</li>
+            <li><b>Rank</b>: ${item.rank}</li>
+            <li><b>Population</b>: ${item.population}</li>
+            <li><b>Growth from 2000 to 2013</b>: ${item.growth_from_2000_to_2013}</li>
+            <li><b>Latitude</b>: ${item.latitude}</li>
+            <li><b>Longitude</b>: ${item.longitude}</li>`;
           }
         });
         return li;
