@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        /* margin: auto; */
+        padding: 0;
+        font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      }
+
+      li {
+        list-style: none;
+        padding: 10px 0px;
+        background-color: #c1c97d;
+        border-bottom: 2px solid #46492d;
+        cursor: pointer;
+        text-align: center;
+      }
+      input {
+        width: 70%;
+        padding: 5px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid;
+      }
+      .container {
+        background-color: #c1c97d;
+        padding: 10px;
+        text-align: center;
+        width: fit-content;
+        margin: auto;
+        width: 400px;
+        border-radius: 5px;
+        box-shadow: 3px 3px 5px;
+      }
+    </style>
+    <title>Barre de reherche autocomplétion</title>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <span id="state">SEARCH</span>
+      </div>
+      <input type="text" id="inp" autofocus="true" placeholder="Enter state" />
+      <ul id="result"></ul>
+    </div>
+
+    <script>
+      const inp = document.getElementById("inp");
+      const ul = document.getElementById("result");
+      const span = document.getElementById("state");
+      let category = "state";
+      let title=`<b>Search about ${category}</b>`
+      let allData = {
+        state: [],
+        city: [],
+      };
+      let isFind = {};
+      inp.addEventListener("input", (e) => {
+        ul.innerHTML = title;
+        cities = [];
+        console.log(e.target.value);
+        isFind = {};
+
+        allData[category].filter((item) => {
+          const city = item[category].toLowerCase();
+          if (city.includes(inp.value)) {
+            if (!(item[category] in isFind)) {
+              isFind[item.state] = [item];
+              ul.appendChild(
+                createLi(item[category], category, JSON.stringify(item))
+              );
+            } else {
+              isFind[item.state].push(item);
+            }
+          }
+        });
+      });
+
+      function createLi(stat, cl, id) {
+        const li = document.createElement("li");
+        li.innerHTML = stat;
+        li.className = cl;
+        li.id = id;
+        li.addEventListener("click", (e) => {
+          if (e.target.classList.contains("state")) {
+            inp.value = stat;
+            ul.innerHTML = `<b>All cities in ${stat}</b>`;
+            category = "city";
+            title=`<b>search about city in ${stat}</b>`
+            allData[category] = [...isFind[stat]];
+            isFind[stat].forEach((item, i) => {
+              //to change input value
+              ul.appendChild(
+                createLi(
+                  `<b>City</b> :${item.city}, <b>State</b>:  ${item.state}`,
+                  "city",
+                  JSON.stringify(item)
+                )
+              );
+            });
+            console.log(allData[category]);
+          } else {
+            // to show info of city
+            category = "State";
+            let item = JSON.parse(e.target.id);
+            inp.value = item.city;
+            title=`<b>Search about ${category}</b>`
+            ul.innerHTML = `
+            <li><b>Info About City</b></li>
+            <li><b>City</b> : ${item.city} </li>
+            <li><b>State</b>:  ${item.state}</li>
+            <li><b>Rank</b>:  ${item.rank}</li>
+            <li><b>Population</b>:  ${item.population}</li>
+            <li><b>Growth from 2000 to 2013</b>:  ${item.growth_from_2000_to_2013}</li>
+            <li><b>Latitude</b>:  ${item.latitude}</li>
+            `;
+          }
+        });
+        return li;
+      }
+
+      async function fetchApi() {
+        const api = await fetch(
+          "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+        );
+        const data = await api.json();
+        allData[category] = [...data];
+      }
+
+      fetchApi();
+    </script>
+  </body>
+</html>
